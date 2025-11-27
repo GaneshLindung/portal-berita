@@ -1,0 +1,8 @@
+# Ignore frontend (repo terpisah)
+news-portal-frontend/
+
+# Ignore backend node_modules
+news-portal-backend/node_modules/
+
+# Optional: ignore env
+.env
