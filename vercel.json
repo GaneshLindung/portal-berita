@@ -1,8 +1,7 @@
 {
   "version": 2,
-  "installCommand": "cd news-portal-frontend && npm install",
-  "buildCommand": "cd news-portal-frontend && npm run build",
-  "outputDirectory": "news-portal-frontend/.next",
+  "installCommand": "if [ -d news-portal-frontend ]; then cd news-portal-frontend; fi && npm install",
+  "buildCommand": "if [ -d news-portal-frontend ]; then cd news-portal-frontend; fi && npm run build",
   "builds": [
     {
       "src": "news-portal-frontend/next.config.mjs",
