@@ -2,7 +2,7 @@
 import Link from "next/link";
 import BackButton from "../components/BackButton";
 import { useTheme } from "../components/ThemeContext";
-import { buildApiUrl } from '../lib/api';
+import { buildApiUrl, fetchJson } from '../lib/api';
 
 export async function getServerSideProps(context) {
   const { q = "" } = context.query;
@@ -11,10 +11,10 @@ export async function getServerSideProps(context) {
     return { props: { q: "", articles: [] } };
   }
 
-  const res = await fetch(
-    buildApiUrl(`/api/articles?q=${encodeURIComponent(q)}&limit=20`)
+  const articles = await fetchJson(
+    `/api/articles?q=${encodeURIComponent(q)}&limit=20`,
+    { defaultValue: [] }
   );
-  const articles = await res.json();
 
   return { props: { q, articles } };
 }
