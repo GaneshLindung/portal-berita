@@ -3,14 +3,14 @@ import { useTheme } from "../components/ThemeContext";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { buildApiUrl } from '../lib/api';
 
 export async function getServerSideProps() {
-  const baseUrl = 'http://localhost:4000';
 
   const [featuredRes, latestRes, popularRes] = await Promise.all([
-    fetch(`${baseUrl}/api/articles/featured`),
-    fetch(`${baseUrl}/api/articles?limit=6`),
-    fetch(`${baseUrl}/api/articles?sort=popular&limit=5`),
+    fetch(buildApiUrl('/api/articles/featured')),
+    fetch(buildApiUrl('/api/articles?limit=6')),
+    fetch(buildApiUrl('/api/articles?sort=popular&limit=5')),
   ]);
 
   const [featured, latest, popular] = await Promise.all([
@@ -32,6 +32,9 @@ export default function Home({ featured, initialLatest, popular }) {
   const router = useRouter();
   const { theme, mode, setMode } = useTheme();
 
+  const headerHeight = 190;
+  const [navbarHidden, setNavbarHidden] = useState(false);
+
   // state untuk "Muat lebih banyak"
   const [latest, setLatest] = useState(initialLatest);
   const [offset, setOffset] = useState(initialLatest.length);
@@ -42,7 +45,7 @@ export default function Home({ featured, initialLatest, popular }) {
     try {
       setLoadingMore(true);
       const res = await fetch(
-        `http://localhost:4000/api/articles?limit=6&offset=${offset}`
+        buildApiUrl(`/api/articles?limit=6&offset=${offset}`)
       );
       const more = await res.json();
 
@@ -80,16 +83,72 @@ export default function Home({ featured, initialLatest, popular }) {
         minHeight: '100vh',
       }}
     >
+      <button
+        type="button"
+        onClick={() => setNavbarHidden((prev) => !prev)}
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 30,
+          width: '50px',
+          height: '50px',
+          borderRadius: '999px',
+          border: `1px solid ${theme.headerBorder}`,
+          background: navbarHidden
+            ? 'linear-gradient(135deg, #0ea5e9, #2563eb)'
+            : 'linear-gradient(135deg, #0f172a, #1f2937)',
+          color: 'white',
+          boxShadow: '0 10px 24px rgba(0,0,0,0.45)',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        }}
+        aria-label={navbarHidden ? 'Tampilkan navbar' : 'Sembunyikan navbar'}
+        title={navbarHidden ? 'Tampilkan navbar' : 'Sembunyikan navbar'}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.04)';
+          e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.5)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = '0 10px 24px rgba(0,0,0,0.45)';
+        }}
+      >
+        <span style={{ fontSize: '20px' }}>
+          {navbarHidden ? '👁️' : '🙈'}
+        </span>
+        <span
+          style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        >
+          {navbarHidden ? 'Tampilkan navbar' : 'Sembunyikan navbar'}
+        </span>
+      </button>      
       {/* HEADER BARU */}
       <header
         style={{
+          display: navbarHidden ? 'none' : 'block',
           background: theme.headerBg,
           color: 'white',
           padding: '16px 0 18px 0',
           boxShadow: '0 12px 30px rgba(15,23,42,0.7)',
-          position: 'sticky',
+          position: 'fixed',
           top: 0,
           zIndex: 20,
+          width: '100%',
+          left: 0,
         }}
       >
         <div
@@ -353,7 +412,7 @@ export default function Home({ featured, initialLatest, popular }) {
       <main
         style={{
           maxWidth: '1100px',
-          margin: '16px auto',
+          margin: `${(navbarHidden ? 40 : headerHeight + 16)}px auto 0 auto`,
           padding: '0 16px 40px 16px',
         }}
       >

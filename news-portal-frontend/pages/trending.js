@@ -1,5 +1,6 @@
 // pages/trending.js
 import { useEffect, useState } from "react";
+import { buildApiUrl } from '../lib/api';
 import Link from "next/link";
 import BackButton from "../components/BackButton";
 import { useTheme } from "../components/ThemeContext";
@@ -10,11 +11,13 @@ export default function Trending() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/trending/${range}`)
+    fetch(buildApiUrl(`/api/trending/${range}`))
       .then((res) => res.json())
       .then((data) => setItems(data))
       .catch(console.error);
   }, [range]);
+
+  const headerHeight = 110;
 
   return (
     <div
@@ -33,7 +36,11 @@ export default function Trending() {
           color: "white",
           padding: "16px 0",
           boxShadow: "0 3px 12px rgba(0,0,0,0.4)",
-          marginBottom: "20px",
+          position: "fixed",
+          top: 0,
+          zIndex: 20,
+          width: "100%",
+          left: 0,
         }}
       >
         <div
@@ -68,7 +75,13 @@ export default function Trending() {
       </header>
 
       {/* MAIN CONTENT */}
-      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px" }}>
+      <main
+        style={{
+          maxWidth: 1100,
+          margin: "0 auto",
+          padding: `${headerHeight + 16}px 16px 40px 16px`,
+        }}
+      >
         {/* TAB FILTER */}
         <div
           style={{

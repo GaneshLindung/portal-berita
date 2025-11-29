@@ -2,14 +2,15 @@
 import Link from "next/link";
 import BackButton from "../../components/BackButton";
 import { useTheme } from "../../components/ThemeContext";
+import { buildApiUrl } from '../../lib/api';
 
 export async function getServerSideProps(context) {
   const { name } = context.params;
 
   const res = await fetch(
-    `http://localhost:4000/api/articles?category=${encodeURIComponent(
-      name
-    )}&limit=20`
+    buildApiUrl(
+      `/api/articles?category=${encodeURIComponent(name)}&limit=20`
+    )
   );
 
   const articles = await res.json();
@@ -24,6 +25,7 @@ export async function getServerSideProps(context) {
 
 export default function CategoryPage({ name, articles }) {
   const { theme } = useTheme();
+  const headerHeight = 90;
   const prettyCategory =
     name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 
@@ -44,7 +46,11 @@ export default function CategoryPage({ name, articles }) {
           color: "white",
           padding: "14px 0",
           boxShadow: "0 3px 12px rgba(0,0,0,0.5)",
-          marginBottom: "18px",
+          position: "fixed",
+          top: 0,
+          width: "100%",
+          left: 0,
+          zIndex: 20,
         }}
       >
         <div
@@ -98,7 +104,7 @@ export default function CategoryPage({ name, articles }) {
       <main
         style={{
           maxWidth: 1100,
-          margin: "0 auto",
+          margin: `${headerHeight + 16}px auto 0 auto`,
           padding: "0 16px 32px 16px",
         }}
       >

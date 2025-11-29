@@ -4,11 +4,12 @@ import BookmarkButton from "../../components/BookmarkButton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTheme } from "../../components/ThemeContext";
+import { buildApiUrl } from '../../lib/api';
 
 export async function getServerSideProps(context) {
   const { slug } = context.params;
 
-  const res = await fetch(`http://localhost:4000/api/articles/${slug}`);
+  const res = await fetch(buildApiUrl(`/api/articles/${slug}`));
 
   if (!res.ok) {
     return { notFound: true };
@@ -20,6 +21,8 @@ export async function getServerSideProps(context) {
 
 export default function ArticleDetail({ article }) {
   const { theme } = useTheme();
+
+  const headerHeight = 90;
 
   // estimasi waktu baca
   const wordCount = article.content
@@ -33,11 +36,11 @@ export default function ArticleDetail({ article }) {
   // View counter: tambah view + ambil ulang
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch(`http://localhost:4000/api/articles/${article.slug}/view`, {
+      fetch(buildApiUrl(`/api/articles/${article.slug}/view`), {
         method: "POST",
       })
         .then(() =>
-          fetch(`http://localhost:4000/api/articles/${article.slug}`)
+          fetch(buildApiUrl(`/api/articles/${article.slug}`))
         )
         .then((res) => res.json())
         .then((data) => setViewCount(data.views))
@@ -51,9 +54,9 @@ export default function ArticleDetail({ article }) {
   useEffect(() => {
     if (!article.category) return;
     fetch(
-      `http://localhost:4000/api/articles?category=${encodeURIComponent(
-        article.category
-      )}&limit=4`
+      buildApiUrl(
+        `/api/articles?category=${encodeURIComponent(article.category)}&limit=4`
+      )
     )
       .then((res) => res.json())
       .then((data) => {
@@ -80,6 +83,11 @@ export default function ArticleDetail({ article }) {
           color: "white",
           padding: "14px 0",
           boxShadow: "0 2px 10px rgba(0,0,0,0.45)",
+          position: "fixed",
+          top: 0,
+          width: "100%",
+          left: 0,
+          zIndex: 20,
         }}
       >
         <div
@@ -146,7 +154,7 @@ export default function ArticleDetail({ article }) {
       <main
         style={{
           maxWidth: "900px",
-          margin: "24px auto 40px auto",
+          margin: `${headerHeight + 24}px auto 40px auto`,
           padding: "0 16px 32px 16px",
         }}
       >
@@ -393,7 +401,7 @@ function Comments({ articleId }) {
 
   // ambil komentar
   useEffect(() => {
-    fetch(`http://localhost:4000/api/comments/${articleId}`)
+    fetch(buildApiUrl(`/api/comments/${articleId}`))
       .then((res) => res.json())
       .then((data) => setComments(data))
       .catch(console.error);
@@ -405,7 +413,7 @@ function Comments({ articleId }) {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:4000/api/comments/${articleId}`,
+        buildApiUrl(`/api/comments/${articleId}`),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
