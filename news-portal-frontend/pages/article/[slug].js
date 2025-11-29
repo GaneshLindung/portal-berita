@@ -4,17 +4,24 @@ import BookmarkButton from "../../components/BookmarkButton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTheme } from "../../components/ThemeContext";
+<<<<<<< HEAD
+=======
+import { buildApiUrl, fetchJson } from '../../lib/api';
+>>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
 
 export async function getServerSideProps(context) {
   const { slug } = context.params;
 
+<<<<<<< HEAD
   const res = await fetch(`http://localhost:4000/api/articles/${slug}`);
 
   if (!res.ok) {
+=======
+  const article = await fetchJson(`/api/articles/${slug}`);
+  if (!article) {
+>>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
     return { notFound: true };
   }
-
-  const article = await res.json();
   return { props: { article } };
 }
 

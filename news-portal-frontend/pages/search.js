@@ -2,6 +2,10 @@
 import Link from "next/link";
 import BackButton from "../components/BackButton";
 import { useTheme } from "../components/ThemeContext";
+<<<<<<< HEAD
+=======
+import { buildApiUrl, fetchJson } from '../lib/api';
+>>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
 
 export async function getServerSideProps(context) {
   const { q = "" } = context.query;
@@ -11,10 +15,15 @@ export async function getServerSideProps(context) {
     return { props: { q: "", articles: [] } };
   }
 
+<<<<<<< HEAD
   const res = await fetch(
     `${baseUrl}/api/articles?q=${encodeURIComponent(q)}&limit=20`
+=======
+  const articles = await fetchJson(
+    `/api/articles?q=${encodeURIComponent(q)}&limit=20`,
+    { defaultValue: [] }
+>>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
   );
-  const articles = await res.json();
 
   return { props: { q, articles } };
 }
