@@ -7,11 +7,5 @@
       "src": "news-portal-frontend/next.config.mjs",
       "use": "@vercel/next"
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/news-portal-frontend/$1"
-    }
   ]
 }
