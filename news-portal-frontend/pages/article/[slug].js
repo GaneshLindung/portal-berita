@@ -4,18 +4,15 @@ import BookmarkButton from "../../components/BookmarkButton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTheme } from "../../components/ThemeContext";
-import { buildApiUrl } from '../../lib/api';
+import { buildApiUrl, fetchJson } from '../../lib/api';
 
 export async function getServerSideProps(context) {
   const { slug } = context.params;
 
-  const res = await fetch(buildApiUrl(`/api/articles/${slug}`));
-
-  if (!res.ok) {
+  const article = await fetchJson(`/api/articles/${slug}`);
+  if (!article) {
     return { notFound: true };
   }
-
-  const article = await res.json();
   return { props: { article } };
 }
 
