@@ -4,12 +4,11 @@ import BookmarkButton from "../../components/BookmarkButton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTheme } from "../../components/ThemeContext";
-import { buildApiUrl } from '../../lib/api';
 
 export async function getServerSideProps(context) {
   const { slug } = context.params;
 
-  const res = await fetch(buildApiUrl(`/api/articles/${slug}`));
+  const res = await fetch(`http://localhost:4000/api/articles/${slug}`);
 
   if (!res.ok) {
     return { notFound: true };
@@ -36,11 +35,11 @@ export default function ArticleDetail({ article }) {
   // View counter: tambah view + ambil ulang
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch(buildApiUrl(`/api/articles/${article.slug}/view`), {
+      fetch(`http://localhost:4000/api/articles/${article.slug}/view`, {
         method: "POST",
       })
         .then(() =>
-          fetch(buildApiUrl(`/api/articles/${article.slug}`))
+          fetch(`http://localhost:4000/api/articles/${article.slug}`)
         )
         .then((res) => res.json())
         .then((data) => setViewCount(data.views))
@@ -54,9 +53,9 @@ export default function ArticleDetail({ article }) {
   useEffect(() => {
     if (!article.category) return;
     fetch(
-      buildApiUrl(
-        `/api/articles?category=${encodeURIComponent(article.category)}&limit=4`
-      )
+      `http://localhost:4000/api/articles?category=${encodeURIComponent(
+        article.category
+      )}&limit=4`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -401,7 +400,7 @@ function Comments({ articleId }) {
 
   // ambil komentar
   useEffect(() => {
-    fetch(buildApiUrl(`/api/comments/${articleId}`))
+    fetch(`http://localhost:4000/api/comments/${articleId}`)
       .then((res) => res.json())
       .then((data) => setComments(data))
       .catch(console.error);
@@ -413,7 +412,7 @@ function Comments({ articleId }) {
     setLoading(true);
     try {
       const res = await fetch(
-        buildApiUrl(`/api/comments/${articleId}`),
+        `http://localhost:4000/api/comments/${articleId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

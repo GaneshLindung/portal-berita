@@ -3,14 +3,14 @@ import { useTheme } from "../components/ThemeContext";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { buildApiUrl } from '../lib/api';
 
 export async function getServerSideProps() {
+  const baseUrl = 'http://localhost:4000';
 
   const [featuredRes, latestRes, popularRes] = await Promise.all([
-    fetch(buildApiUrl('/api/articles/featured')),
-    fetch(buildApiUrl('/api/articles?limit=6')),
-    fetch(buildApiUrl('/api/articles?sort=popular&limit=5')),
+    fetch(`${baseUrl}/api/articles/featured`),
+    fetch(`${baseUrl}/api/articles?limit=6`),
+    fetch(`${baseUrl}/api/articles?sort=popular&limit=5`),
   ]);
 
   const [featured, latest, popular] = await Promise.all([
@@ -45,7 +45,7 @@ export default function Home({ featured, initialLatest, popular }) {
     try {
       setLoadingMore(true);
       const res = await fetch(
-        buildApiUrl(`/api/articles?limit=6&offset=${offset}`)
+        `http://localhost:4000/api/articles?limit=6&offset=${offset}`
       );
       const more = await res.json();
 

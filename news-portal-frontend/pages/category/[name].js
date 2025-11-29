@@ -2,15 +2,14 @@
 import Link from "next/link";
 import BackButton from "../../components/BackButton";
 import { useTheme } from "../../components/ThemeContext";
-import { buildApiUrl } from '../../lib/api';
 
 export async function getServerSideProps(context) {
   const { name } = context.params;
 
   const res = await fetch(
-    buildApiUrl(
-      `/api/articles?category=${encodeURIComponent(name)}&limit=20`
-    )
+    `http://localhost:4000/api/articles?category=${encodeURIComponent(
+      name
+    )}&limit=20`
   );
 
   const articles = await res.json();
