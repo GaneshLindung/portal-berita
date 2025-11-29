@@ -13,4 +13,17 @@ export function buildApiUrl(path) {
   return `${normalizedBaseUrl}${normalizedPath}`;
 }
 
+export async function fetchJson(path, { defaultValue = null } = {}) {
+  try {
+    const response = await fetch(buildApiUrl(path));
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Failed to fetch ${path} from ${normalizedBaseUrl}:`, error);
+    return defaultValue;
+  }
+}
+
 export const API_BASE_URL = normalizedBaseUrl;
