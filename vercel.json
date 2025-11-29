@@ -11,7 +11,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "news-portal-frontend/$1"
+      "dest": "/news-portal-frontend/$1"
     }
   ]
 }
