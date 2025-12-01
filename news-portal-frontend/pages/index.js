@@ -1,22 +1,15 @@
 // pages/index.js
 import { useTheme } from "../components/ThemeContext";
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { API_BASE_URL, safeFetchJson } from "../lib/api";
 
 export async function getServerSideProps() {
-  const baseUrl = 'http://localhost:4000';
-
-  const [featuredRes, latestRes, popularRes] = await Promise.all([
-    fetch(`${baseUrl}/api/articles/featured`),
-    fetch(`${baseUrl}/api/articles?limit=6`),
-    fetch(`${baseUrl}/api/articles?sort=popular&limit=5`),
-  ]);
-
   const [featured, latest, popular] = await Promise.all([
-    featuredRes.ok ? featuredRes.json() : [],
-    latestRes.ok ? latestRes.json() : [],
-    popularRes.ok ? popularRes.json() : [],
+    safeFetchJson("/api/articles/featured", []),
+    safeFetchJson("/api/articles?limit=6", []),
+    safeFetchJson("/api/articles?sort=popular&limit=5", []),
   ]);
 
   return {
@@ -45,8 +38,11 @@ export default function Home({ featured, initialLatest, popular }) {
     try {
       setLoadingMore(true);
       const res = await fetch(
-        `http://localhost:4000/api/articles?limit=6&offset=${offset}`
+        `${API_BASE_URL}/api/articles?limit=6&offset=${offset}`
       );
+      if (!res.ok) {
+        throw new Error(`Failed to load more articles (${res.status})`);
+      }
       const more = await res.json();
 
       if (more.length === 0) {
@@ -58,7 +54,8 @@ export default function Home({ featured, initialLatest, popular }) {
       setOffset((prev) => prev + more.length);
       if (more.length < 6) setHasMore(false);
     } catch (err) {
-      console.error(err);
+      console.error("Error loading more articles:", err);
+      setHasMore(false);
     } finally {
       setLoadingMore(false);
     }

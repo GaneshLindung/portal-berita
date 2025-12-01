@@ -4,16 +4,16 @@ import BookmarkButton from "../../components/BookmarkButton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTheme } from "../../components/ThemeContext";
+import { API_BASE_URL, safeFetchJson } from "../../lib/api";
 
 export async function getServerSideProps(context) {
   const { slug } = context.params;
 
-  const res = await fetch(`http://localhost:4000/api/articles/${slug}`);
+  const article = await safeFetchJson(`/api/articles/${slug}`, null);
 
-  if (!res.ok) {
+  if (!article) {
     return { notFound: true };
   }
-  const article = await res.json();
   return { props: { article } };
 }
 
@@ -34,11 +34,11 @@ export default function ArticleDetail({ article }) {
   // View counter: tambah view + ambil ulang
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch(`http://localhost:4000/api/articles/${article.slug}/view`, {
+      fetch(`${API_BASE_URL}/api/articles/${article.slug}/view`, {
         method: "POST",
       })
         .then(() =>
-          fetch(`http://localhost:4000/api/articles/${article.slug}`)
+          fetch(`${API_BASE_URL}/api/articles/${article.slug}`)
         )
         .then((res) => res.json())
         .then((data) => setViewCount(data.views))
@@ -52,7 +52,7 @@ export default function ArticleDetail({ article }) {
   useEffect(() => {
     if (!article.category) return;
     fetch(
-      `http://localhost:4000/api/articles?category=${encodeURIComponent(
+      `${API_BASE_URL}/api/articles?category=${encodeURIComponent(
         article.category
       )}&limit=4`
     )
@@ -399,7 +399,7 @@ function Comments({ articleId }) {
 
   // ambil komentar
   useEffect(() => {
-    fetch(`http://localhost:4000/api/comments/${articleId}`)
+    fetch(`${API_BASE_URL}/api/comments/${articleId}`)
       .then((res) => res.json())
       .then((data) => setComments(data))
       .catch(console.error);
@@ -411,7 +411,7 @@ function Comments({ articleId }) {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:4000/api/comments/${articleId}`,
+        `${API_BASE_URL}/api/comments/${articleId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import BackButton from "../components/BackButton";
 import { useTheme } from "../components/ThemeContext";
+import { API_BASE_URL } from "../lib/api";
 
 export default function Trending() {
   const { theme } = useTheme();
@@ -10,7 +11,7 @@ export default function Trending() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/trending/${range}`)
+    fetch(`${API_BASE_URL}/api/trending/${range}`)
       .then((res) => res.json())
       .then((data) => setItems(data))
       .catch(console.error);

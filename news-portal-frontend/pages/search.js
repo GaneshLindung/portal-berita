@@ -2,19 +2,19 @@
 import Link from "next/link";
 import BackButton from "../components/BackButton";
 import { useTheme } from "../components/ThemeContext";
+import { safeFetchJson } from "../lib/api";
 
 export async function getServerSideProps(context) {
   const { q = "" } = context.query;
-  const baseUrl = "http://localhost:4000";
 
   if (!q) {
     return { props: { q: "", articles: [] } };
   }
 
-  const res = await fetch(
-    `${baseUrl}/api/articles?q=${encodeURIComponent(q)}&limit=20`
+  const articles = await safeFetchJson(
+    `/api/articles?q=${encodeURIComponent(q)}&limit=20`,
+    []
   );
-  const articles = res.ok ? await res.json() : [];
 
   return { props: { q, articles } };
 }
