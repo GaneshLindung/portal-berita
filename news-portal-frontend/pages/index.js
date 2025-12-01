@@ -3,27 +3,20 @@ import { useTheme } from "../components/ThemeContext";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-<<<<<<< HEAD
-=======
-import { buildApiUrl, fetchJson } from '../lib/api';
->>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
 
 export async function getServerSideProps() {
   const baseUrl = 'http://localhost:4000';
 
-<<<<<<< HEAD
   const [featuredRes, latestRes, popularRes] = await Promise.all([
     fetch(`${baseUrl}/api/articles/featured`),
     fetch(`${baseUrl}/api/articles?limit=6`),
     fetch(`${baseUrl}/api/articles?sort=popular&limit=5`),
   ]);
 
-=======
->>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
   const [featured, latest, popular] = await Promise.all([
-    fetchJson('/api/articles/featured', { defaultValue: [] }),
-    fetchJson('/api/articles?limit=6', { defaultValue: [] }),
-    fetchJson('/api/articles?sort=popular&limit=5', { defaultValue: [] }),
+    featuredRes.ok ? featuredRes.json() : [],
+    latestRes.ok ? latestRes.json() : [],
+    popularRes.ok ? popularRes.json() : [],
   ]);
 
   return {

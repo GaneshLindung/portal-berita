@@ -2,25 +2,16 @@
 import Link from "next/link";
 import BackButton from "../../components/BackButton";
 import { useTheme } from "../../components/ThemeContext";
-<<<<<<< HEAD
-=======
-import { buildApiUrl, fetchJson } from '../../lib/api';
->>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
 
 export async function getServerSideProps(context) {
   const { name } = context.params;
 
-<<<<<<< HEAD
   const res = await fetch(
     `http://localhost:4000/api/articles?category=${encodeURIComponent(
       name
     )}&limit=20`
-=======
-  const articles = await fetchJson(
-    `/api/articles?category=${encodeURIComponent(name)}&limit=20`,
-    { defaultValue: [] }
->>>>>>> 73c5256d0d5cb2db52ef34721ad5ce9698a04c33
   );
+  const articles = res.ok ? await res.json() : [];
 
   return {
     props: {
