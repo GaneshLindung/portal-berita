@@ -53,21 +53,17 @@ export default function Trending() {
       if (!isMounted) return;
 
       const isArrayResponse = Array.isArray(data);
-      const isEmptyResponse = isArrayResponse && data.length === 0;
       const isFallback = data === FALLBACK_ITEMS;
-      const resolvedItems = isArrayResponse ? data : FALLBACK_ITEMS;
 
-      if (isEmptyResponse) {
-        setItems(FALLBACK_ITEMS);
-        setError("Belum ada data trending untuk rentang ini.");
+      if (isArrayResponse && data.length > 0) {
+        setItems(data);
       } else {
-        setItems(resolvedItems);
-
-        if (isFallback) {
-          setError(
-            "Gagal memuat data trending. Pastikan backend berjalan dan koneksi API sesuai."
-          );
-        }
+        setItems([]);
+        setError(
+          isFallback
+            ? "Gagal memuat data trending. Pastikan backend berjalan dan koneksi API sesuai."
+            : "Belum ada data trending untuk rentang ini."
+        );
       }
 
       setLoading(false);
@@ -206,118 +202,120 @@ export default function Trending() {
         )}
 
         {/* LIST TRENDING */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: 20,
-            marginBottom: 40,
-            opacity: loading ? 0.5 : 1,
-            transition: "opacity 0.2s ease",
-          }}
-        >
-          {items.map((a, index) => (
-            <article
-              key={a.id}
-              style={{
-                backgroundColor: "white",
-                borderRadius: 14,
-                overflow: "hidden",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                display: "flex",
-                flexDirection: "column",
-                transition: "0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-4px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 24px rgba(0,0,0,0.18)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0px)";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 12px rgba(0,0,0,0.08)";
-              }}
-            >
-              <div
-                aria-hidden
+        {items.length > 0 && (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: 20,
+              marginBottom: 40,
+              opacity: loading ? 0.5 : 1,
+              transition: "opacity 0.2s ease",
+            }}
+          >
+            {items.map((a, index) => (
+              <article
+                key={a.id}
                 style={{
-                  background: CARD_BACKGROUNDS[index % CARD_BACKGROUNDS.length],
-                  height: 110,
-                  borderBottom: "1px solid #e2e8f0",
+                  backgroundColor: "white",
+                  borderRadius: 14,
+                  overflow: "hidden",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                   display: "flex",
-                  alignItems: "flex-end",
-                  justifyContent: "space-between",
-                  padding: "12px 14px",
-                  color: "#0f172a",
-                  gap: 8,
+                  flexDirection: "column",
+                  transition: "0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 12px 24px rgba(0,0,0,0.18)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 12px rgba(0,0,0,0.08)";
                 }}
               >
                 <div
+                  aria-hidden
                   style={{
+                    background: CARD_BACKGROUNDS[index % CARD_BACKGROUNDS.length],
+                    height: 110,
+                    borderBottom: "1px solid #e2e8f0",
                     display: "flex",
-                    gap: 10,
-                    alignItems: "center",
-                    fontWeight: 700,
+                    alignItems: "flex-end",
+                    justifyContent: "space-between",
+                    padding: "12px 14px",
+                    color: "#0f172a",
+                    gap: 8,
                   }}
                 >
-                  <span
+                  <div
                     style={{
-                      backgroundColor: "rgba(15, 23, 42, 0.08)",
-                      padding: "6px 12px",
-                      borderRadius: 9999,
-                      fontSize: 12,
+                      display: "flex",
+                      gap: 10,
+                      alignItems: "center",
+                      fontWeight: 700,
                     }}
                   >
-                    #{index + 1}
+                    <span
+                      style={{
+                        backgroundColor: "rgba(15, 23, 42, 0.08)",
+                        padding: "6px 12px",
+                        borderRadius: 9999,
+                        fontSize: 12,
+                      }}
+                    >
+                      #{index + 1}
+                    </span>
+                  </div>
+
+                  <span style={{ fontSize: 12, opacity: 0.8 }}>
+                    👁 {a.views}x dilihat
                   </span>
                 </div>
 
-                <span style={{ fontSize: 12, opacity: 0.8 }}>
-                  👁 {a.views}x dilihat
-                </span>
-              </div>
-
-              <div style={{ padding: 14 }}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    backgroundColor: "#eef2ff",
-                    color: "#4f46e5",
-                    padding: "4px 10px",
-                    borderRadius: 50,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    marginBottom: 6,
-                  }}
-                >
-                  #{index + 1} • {a.category}
-                </span>
-
-                <h2
-                  style={{
-                    fontSize: 17,
-                    margin: "6px 0",
-                    fontWeight: 600,
-                    color: "#0f172a",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  <Link
-                    href={`/article/${a.slug}`}
-                    style={{ textDecoration: "none", color: "#0f172a" }}
+                <div style={{ padding: 14 }}>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      backgroundColor: "#eef2ff",
+                      color: "#4f46e5",
+                      padding: "4px 10px",
+                      borderRadius: 50,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      marginBottom: 6,
+                    }}
                   >
-                    {a.title}
-                  </Link>
-                </h2>
+                    #{index + 1} • {a.category}
+                  </span>
 
-                <p style={{ fontSize: 13, color: "#64748b" }}>
-                  {a.excerpt}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
+                  <h2
+                    style={{
+                      fontSize: 17,
+                      margin: "6px 0",
+                      fontWeight: 600,
+                      color: "#0f172a",
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    <Link
+                      href={`/article/${a.slug}`}
+                      style={{ textDecoration: "none", color: "#0f172a" }}
+                    >
+                      {a.title}
+                    </Link>
+                  </h2>
+
+                  <p style={{ fontSize: 13, color: "#64748b" }}>
+                    {a.excerpt}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
